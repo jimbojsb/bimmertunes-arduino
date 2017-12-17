@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "ibus_packet.h"
 
 class DebugInterface {
   private:
@@ -6,6 +7,7 @@ class DebugInterface {
   public:
     DebugInterface(bool enable);
     void update();
-    void write(byte msg[]);
+    void write(IbusPacket *pkt);
+    void write(byte *msg, int len);
     void write(const char *msg);
 };

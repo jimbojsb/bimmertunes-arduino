@@ -59,7 +59,7 @@ byte* IbusPacket::asBytes() {
     msg[PKT_LEN_IDX] = this->length;
     msg[PKT_DEST_IDX] = this->destination;
     for (int i = 0; i < this->contentLen; i++) {
-        msg[PKT_CONTENT_IDX + i] = content[i];
+        msg[PKT_CONTENT_IDX + i] = this->content[i];
     }
     msg[msgLen - 1] = this->checksum;
     return msg;

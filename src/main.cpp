@@ -16,11 +16,9 @@ void setup() {
     Serial2.begin(9600);
 
     byte content[] = {0x01};
+
     IbusPacket p(0x68, 0x03, 0x18, content, 1);
-    byte* msg = p.asBytes();
-    for (int i = 0; i < p.byteLen(); i++) {
-        Serial.println(msg[i], HEX);
-    }
+    debug.write(&p);
 }
 
 void loop() {
