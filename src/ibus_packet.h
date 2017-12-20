@@ -23,10 +23,13 @@ class IbusPacket {
     byte *content;
     int contentLen;
     IbusPacket(byte msg[], int len);
+    IbusPacket(byte source, byte destination, byte* content, int contentLen);
     IbusPacket(byte source, byte length, byte destination, byte* content, int contentLen);
     IbusPacket(byte source, byte length, byte destination, byte* content, int contentLen, byte checksum);
     byte* asBytes();
     int byteLen();
+    bool equals(IbusPacket *pkt);
+    bool contentEquals(byte *content, int len);
     static bool isPacket(byte msg[], int len);    
 
 };

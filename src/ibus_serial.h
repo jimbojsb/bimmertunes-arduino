@@ -1,14 +1,17 @@
 #include <Arduino.h>
+#include "ibus_packet.h"
+
+#define BUS_GAP_THRESHOLD 10
 
 class IbusSerial {
   private:
-    unsigned long previousMillis;
-    unsigned long currentMillis;
-    byte buffer[64];
-    
+    unsigned long previousReadMillis = 0;
+    unsigned long busQuietMillis = 0;
+    int readBufferIndex = 0;
+    byte readBuffer[36];
+    IbusPacket* writeBuffer[4];
+    void resetReadBuffer();
   public:
-    IbusSerial();
-    void update(unsigned long currentMillis);
-    void write(byte msg[]);
-    void write(const char *msg);
+    void update();
+    void write(IbusPacket &pkt);
 };

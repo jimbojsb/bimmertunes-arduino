@@ -7,7 +7,8 @@ class DebugInterface {
   public:
     DebugInterface(bool enable);
     void update();
-    void write(IbusPacket *pkt);
+    void write(const char *prefix, IbusPacket &pkt);
     void write(byte *msg, int len);
+    void write(const char *prefix, byte *msg, int len);
     void write(const char *msg);
 };

@@ -5,33 +5,41 @@ DebugInterface::DebugInterface(bool enable) {
     this->enabled = enable;
 }
 
-void DebugInterface::write(IbusPacket *pkt) {
+void DebugInterface::write(const char *prefix, IbusPacket &pkt) {
     if (this->enabled) {
+        Serial.print(prefix);
         char buf[3];
-        sprintf(buf, "%02X ", pkt->source);
+        sprintf(buf, "%02X ", pkt.source);
         Serial.print(buf);
-        sprintf(buf, "%02X ", pkt->length);
+        sprintf(buf, "%02X ", pkt.length);
         Serial.print(buf);
-        sprintf(buf, "%02X ", pkt->destination);
+        sprintf(buf, "%02X ", pkt.destination);
         Serial.print(buf);
-        for (int i = 0; i < pkt->contentLen; i++) {
-            sprintf(buf, "%02X ", pkt->content[i]);
+        for (int i = 0; i < pkt.contentLen; i++) {
+            sprintf(buf, "%02X ", pkt.content[i]);
             Serial.print(buf);
         }
-        sprintf(buf, "%02X\n", pkt->checksum);
+        sprintf(buf, "%02X\n", pkt.checksum);
         Serial.print(buf);
     }
 }
 
 void DebugInterface::write(const char *msg) {
     if (this->enabled) {
-        Serial.write(msg);
+        Serial.println(msg);
     }
 }
 
-void DebugInterface::write(byte *msg, int len) {
+
+void DebugInterface::write(const char *prefix, byte *msg, int len) {
     if (this->enabled) {
-        Serial.write(msg, len);
+        char buf[3];
+        Serial.print(prefix);
+        for (int i = 0; i < len; i++) {
+            sprintf(buf, "%02X ", msg[i]);
+            Serial.print(buf);
+        }
+        Serial.write("\n");
     }
 }
 

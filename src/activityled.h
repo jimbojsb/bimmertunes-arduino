@@ -1,10 +1,10 @@
+#define ACTIVITY_LED_DURATION 500
+
 class ActivityLed {
   private:
-    unsigned long previousMillis;
-    int pin;
-    int state;
+    unsigned long previousMillis = 0;
+    int state = LOW;
   public:
-    ActivityLed(int pin);
-    void update(unsigned long millis);
-    void blink(unsigned long millis);
+    void update();
+    void blink();
 };

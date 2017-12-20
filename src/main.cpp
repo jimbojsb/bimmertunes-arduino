@@ -4,25 +4,45 @@
 #include "activityled.h"
 #include "debug_interface.h"
 #include "ibus_packet.h"
+#include "ibus_serial.h"
+#include "serial_aliases.h"
+#include "pin_aliases.h"
+#include "ibus_dispatcher.h"
+#include "ibus_ike_broadcast.h"
 
 BC127 bt(&Serial2);
-ActivityLed activityLed(LED_PIN);
+ActivityLed activityLed;
 DebugInterface debug(ENABLE_DEBUG);
+IbusSerial ibusSerial;
+IbusDispatcher ibusDispatcher;
+IbusIkeBroadcast ikeBroadcast;
+unsigned long currentMillis = 0;
 
 
 void setup() {
-    Serial.begin(9600);
-    Serial1.begin(9600, SERIAL_8E1);
-    Serial2.begin(9600);
+    dbSerial.begin(9600);
+    ibSerial.begin(9600, SERIAL_8E1);
+    btSerial.begin(9600);
 
-    byte content[] = {0x01};
+    // wake up 2025 for tx
+    pinMode(CSWAKE, OUTPUT);
+    digitalWrite(CSWAKE, HIGH);
 
-    IbusPacket p(0x68, 0x03, 0x18, content, 1);
-    debug.write(&p);
+    // set up onboard led
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
+    activityLed.blink();
+
+    delay(2000);
+    debug.write("BimmerTunes initialized");
 }
 
 void loop() {
-    unsigned long currentMillis = millis();
-    debug.update();
-    activityLed.update(currentMillis);
+    currentMillis = millis();
+    if (ENABLE_IKE_BROADCAST) {
+        ikeBroadcast.update();
+    }
+    ibusSerial.update();
+    ibusDispatcher.update();
+    activityLed.update();
 }

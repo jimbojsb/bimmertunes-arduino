@@ -1,8 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define ENABLE_IKE_BROADCAST false
+
 #define ENABLE_DEBUG true
-#define LED_PIN 11
 
 #define DEBUG_PORT Serial
 #define IBUS_PORT Serial1

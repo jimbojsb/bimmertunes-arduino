@@ -1,6 +1,7 @@
+#include <Arduino.h>
 #include "ibus_packet.h"
 
-extern HardwareSerial Serial;
+extern usb_serial_class Serial;
 
 IbusPacket::IbusPacket(byte msg[], int len) {
     this->source = msg[PKT_SRC_IDX];
@@ -13,6 +14,16 @@ IbusPacket::IbusPacket(byte msg[], int len) {
     }
     this->content = content;
     this->checksum = msg[len - 1];
+}
+
+IbusPacket::IbusPacket(byte source, byte destination, byte* content, int contentLen) {
+  this->source = source;
+  this->destination = destination;
+  this->content = content;
+  this->contentLen = contentLen;
+  int length = this->contentLen + PKT_OVERHEAD_SIZE - 2;
+  this->length = byte(length);
+  this->setChecksum();
 }
 
 IbusPacket::IbusPacket(byte source, byte length, byte destination, byte* content, int contentLen) {
@@ -48,7 +59,7 @@ byte IbusPacket::calculateChecksum(byte *msg, int len) {
   byte checksum = 0x00;
   for (int i = 0; i < len; i++) {
     checksum ^= msg[i];
-  }  
+  }
   return checksum;
 }
 
@@ -67,6 +78,26 @@ byte* IbusPacket::asBytes() {
 
 int IbusPacket::byteLen() {
     return PKT_OVERHEAD_SIZE + this->contentLen;
+}
+
+bool IbusPacket::equals(IbusPacket *pkt) {
+    return (
+        pkt->source == this->source &&
+        pkt->destination == this->destination &&
+        pkt->checksum == this->checksum
+    );
+}
+
+bool IbusPacket::contentEquals(byte *content, int len) {
+    if (len == this->contentLen) {
+        for (int i = 0; i < len; i++) {
+            if (content[i] != this->content[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 bool IbusPacket::isPacket(byte *msg, int len) {
